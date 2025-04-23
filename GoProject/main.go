@@ -32,15 +32,15 @@ type ErrorInfo struct {
 // RecordErrorInfoTab 定义数据库表结构
 type RecordErrorInfoTab struct {
 	Id                 uint64 `gorm:"column:id;type:bigint(20) unsigned;primary_key;AUTO_INCREMENT;comment:id" json:"id"`
-	ApplicationType    int    `gorm:"column:application_type;type:int(3) unsigned;default:0;comment:application type like fms;NOT NULL" json:"application_type"`
-	BusinessType       int    `gorm:"column:business_type;type:int(3) unsigned;default:0;comment:business type like login;NOT NULL" json:"business_type"`
-	FunctionalCategory int    `gorm:"column:functional_category;type:int(3) unsigned;default:0;comment:functional category like goggle login;NOT NULL" json:"functional_category"`
-	Url                string `gorm:"column:url;type:varchar(64);default:'';comment:url info;NOT NULL" json:"url"`
+	ApplicationType    string `gorm:"column:application_type;type:varchar(128);default:'';comment:application type like fms;NOT NULL" json:"application_type"`
+	BusinessType       string `gorm:"column:business_type;type:varchar(128);default:'';comment:business type like login;NOT NULL" json:"business_type"`
+	FunctionalCategory string `gorm:"column:functional_category;type:varchar(128);default:'';comment:functional category like goggle login;NOT NULL" json:"functional_category"`
+	Url                string `gorm:"column:url;type:varchar(128);default:'';comment:url info;NOT NULL" json:"url"`
 	ErrorCode          int    `gorm:"column:error_code;type:int(10) unsigned;default:0;comment:error_code info;NOT NULL" json:"error_code"`
 	ErrorMsg           string `gorm:"column:error_msg;type:varchar(512);default:'';comment:error_msg info;NOT NULL" json:"error_msg"`
 	NewErrorCode       int    `gorm:"column:new_error_code;type:int(10) unsigned;default:0;comment:new error_code info;NOT NULL" json:"new_error_code"`
-	IfFeUsed           int    `gorm:"column:if_fe_used;type:int(3) unsigned;default:0;comment:fe if use error code,0:not use,1:used;NOT NULL" json:"if_fe_used"`
-	ErrorCategory      int    `gorm:"column:error_category;type:int(3) unsigned;default:0;comment:error category like db error,buiness error;NOT NULL" json:"error_category"`
+	IfFeUsed           string `gorm:"column:if_fe_used;type:varchar(128);default:'';comment:fe if use error code,0:not use,1:used;NOT NULL" json:"if_fe_used"`
+	ErrorCategory      string `gorm:"column:error_category;type:varchar(128);default:'';comment:error category like db error,buiness error;NOT NULL" json:"error_category"`
 	UrgencyDegreeType  int    `gorm:"column:urgency_degree_type;type:int(3) unsigned;default:0;comment:urgency degree type like high;NOT NULL" json:"urgency_degree_type"`
 	ErrorReasonList    string `gorm:"column:error_reason_list;type:varchar(512);default:'';comment:error source;NOT NULL" json:"error_reason_list"`
 	ErrorAlarmStrategy string `gorm:"column:error_alarm_strategy;type:varchar(512);default:'';comment:alarm strategy;NOT NULL" json:"error_alarm_strategy"`
@@ -84,13 +84,13 @@ func main() {
 		// 设置字段值，处理指针类型
 		if info.ApplicationType != nil {
 			// 这里需要根据实际业务逻辑将字符串转换为对应的int值
-			record.ApplicationType = 1 // 示例值，需要根据实际业务逻辑修改
+			record.ApplicationType = *info.ApplicationType
 		}
 		if info.BusinessType != nil {
-			record.BusinessType = 1 // 示例值，需要根据实际业务逻辑修改
+			record.BusinessType = *info.BusinessType
 		}
 		if info.FunctionalCategory != nil {
-			record.FunctionalCategory = 1 // 示例值，需要根据实际业务逻辑修改
+			record.FunctionalCategory = *info.FunctionalCategory
 		}
 		if info.URL != nil {
 			record.Url = *info.URL
@@ -105,14 +105,10 @@ func main() {
 			record.NewErrorCode = *info.NewErrorCode
 		}
 		if info.IfFeUsed != nil {
-			if *info.IfFeUsed == "Y" {
-				record.IfFeUsed = 1
-			} else {
-				record.IfFeUsed = 0
-			}
+			record.IfFeUsed = *info.IfFeUsed
 		}
 		if info.ErrorCategory != nil {
-			record.ErrorCategory = 1 // 示例值，需要根据实际业务逻辑修改
+			record.ErrorCategory = *info.ErrorCategory
 		}
 		if info.UrgencyDegreeType != nil {
 			record.UrgencyDegreeType = 1 // 示例值，需要根据实际业务逻辑修改
