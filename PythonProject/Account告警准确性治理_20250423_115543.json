@@ -1,3 +1,5 @@
+{
+    "list":
 [
     {
         "application_type": "FMS Portal",
@@ -2240,3 +2242,4 @@
         "error_extra_info": null
     }
 ]
+}
