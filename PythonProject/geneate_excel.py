@@ -115,6 +115,9 @@ def excel_to_json(excel_file_path, output_json_path=None):
     # 将DataFrame转换为字典，并将NaN替换为None
     data = df.replace({np.nan: None}).to_dict(orient='records')
     
+    # 将数据包装在list键中
+    wrapped_data = {"list": data}
+    
     # 如果没有指定输出路径，则使用Excel文件名加上时间戳
     if output_json_path is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -123,9 +126,9 @@ def excel_to_json(excel_file_path, output_json_path=None):
     
     # 将数据写入JSON文件
     with open(output_json_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        json.dump(wrapped_data, f, ensure_ascii=False, indent=4)
     
-    return data
+    return wrapped_data
 
 if __name__ == "__main__":
     # 示例用法
