@@ -1,5 +1,94 @@
-package main 
-import "fmt"
+package main
+
+import (
+	"crypto/sha512"
+	"encoding/hex"
+	"fmt"
+)
+
+
 func main() {
-	fmt.Println(2)
+	
+	// 初始化用户数据
+	list := []UserInfo{
+		{UserId: 2854, Salt: "trV7GcYvrnusS9d7", Passwd: "505c43dafdff44f9b4c50007f028f42ef9f9053b5974e414ae9b862035e4e470394df4488fe5d1d354c566599f2421b557351e10d43df78727d88a3cb3959fed"},
+		{UserId: 6591, Salt: "EoOY0oTl7pSYYbjp", Passwd: "ef187c2c322e5fa2615c78001c4e18b8888c3c974d88de8ebacd52f869074052c3a1cc692308f373cb9cd8f516c9dd5b3c62e9345204cc2fcd3f70247a9e6c96"},
+		{UserId: 144680, Salt: "BlNVoldVodhcyM0d", Passwd: "f632e562c4c4f60ef58481ee7c24e1aec21d649207d7e81881e6a0a0edd969cd23be552e104a7e2bc79300d013c9be9c22e8e1e864fcb1dff57d91093db4af92"},
+		{UserId: 200834, Salt: "9jLtzOJUpA46MowN", Passwd: "d836a2f8f56deb5245bfdc7d6e7eb40e80cb705a8ef3f59040aac13c9707af3647defa31db5395f20889eada2c1ef665bfd82b032ab00b56adb6c4626cbcc894"},
+		{UserId: 201376, Salt: "IcxHMP8SYSLPdUJS", Passwd: "5a13eaf00293e4f6e59809fbe6d85694ca250ee1dcba592018d79680d6015c9bef45c354cfc10bc4c5b02d8fa1e0c33019b1454270a73215fff07c9a665e3771"},
+		{UserId: 203429, Salt: "9zraADkLncBSCCLo", Passwd: "a5485e270a4d7c3f94372830b8c3b0889e3ae73056b93b4df9eb4f4b6cfc2b592997f7a993dcfde613cae4d76a4a853da998305a8157fd91987136f490b66672"},
+		{UserId: 212585, Salt: "pk9a0Z7P29NmWOVa", Passwd: "05b44c24bcea78ddbddc3f5bb918bf6c657735505107a239e7b46bd3b1832ddac5270fec30684b29b4c2c95b65117c3a214a2d5b8297eafc2f592679b499c93a"},
+		{UserId: 237514, Salt: "1qzhRnUDIiBrGNjj", Passwd: "b3f9f5a8926799492d59ccb0fd7b8cfee7a509398cd8901053dec99e505a9128ee268a365e8bdecf04466c9c5da82dd323b117de7ae20fc7a070fee81d748585"},
+		{UserId: 251747, Salt: "ZiiRmxkmXzhV9TU6", Passwd: "6056e4951ee4b7871c8bae470d102876b32581114a4887975975d6364403e153722d243ffd2a5006df66be65f94c479810de4482dc768faf21584bb27dfdb84f"},
+		{UserId: 255074, Salt: "HDutxqUqNqCMDk3b", Passwd: "3bd7e0cd12f57ba8d325e0d7d365ef813dd0c8a52fcc43f82b8c598e85114791e124974ded06b3d3557138aafa5a5e9d5eafdfca1b4aad5e96d1b543f44b2ddf"},
+		{UserId: 256502, Salt: "qI1hS6sJYN2zBh2s", Passwd: "e7da86dca250fda631a942a27aae4880583854aa8dca30f19801a58b97b16703c47fa94812c8a301a348322a1158d878c9224a30fc3bc5652fef0026837f5ad6"},
+		{UserId: 256510, Salt: "fGWpspJUKxBwB1zh", Passwd: "e1da224a2ca5f95b78934af4c924511324aac86ea5905ece6a1926ac04dfa576d238fa29169558f1c12d4ab0c5d6f691bab8f7bb5eb66d58e8296f4d982ff9ae"},
+		{UserId: 284028, Salt: "0pdOqWGeSqkLMnym", Passwd: "55adc8d9c447ce0be9f212f1bf86a5e300bc7f450928515d6f1de295d656a132722aeaf4949d98467a3792ae8d66ae6446065fb043bb621ae76d1ec31e8719a6"},
+		{UserId: 286529, Salt: "67Y0qBUvD7H8WT6b", Passwd: "20808acc4e8b84fff4a7db9fac438e4df0bb92e03b55199ad0c9f07e2eeb4b012f13b81515faf1beddff4949455309001bf8e1bc5a22d73f97e81d51c5a01d29"},
+		{UserId: 303722, Salt: "wwijkVebmb9DgEbl", Passwd: "2fddc4e02ed62c291db2a368c00d728a83f10407b47fd99ce3aa309edaa21621b568aa00432e512ce7c54c2d773a55196c1a094fbfdf351f7934b61c8d9dec00"},
+		{UserId: 354626, Salt: "uJz7bFw6LmWwMeSJ", Passwd: "7c356c08f36869282a0d19ee4fd69ecdfd7a87fb382ca3851a2f571066981a0adb1244a6584bb5a5977c6e8f26f2e629950d537acaae202a916463a19567a86a"},
+		{UserId: 355651, Salt: "gXw1OC68nstNvfGX", Passwd: "6012153f27ef1df48614e89bd3f8f7275f2b148dfbc1564836089294d0a46bebd6e99111cfcb577caed3e89a181cff70de8e95ecd2672f96f002296813fad820"},
+		{UserId: 356256, Salt: "nA72HlrfBJ4wIybE", Passwd: "c3a6e4aa9607c0045c0ef5667a01215eb8c9f410ee699470759bc7c50b7cb4bdc9102670fd0f797b3d897fe45599b9d54446737048ecf7b014a7bf5dbf310aba"},
+		{UserId: 357495, Salt: "hv1EbsNASqXTNLLn", Passwd: "1d646f67b4c4e5d459c23c16a2d895e91b7d0364e1260c966b3293872944035add303287a63a86e704e3c1b1be9e49b1309a4a666d329b69a3b71dc04fa182be"},
+		{UserId: 362319, Salt: "uqSBCc7H2MOHbLV2", Passwd: "2954f2b4707146d0b8ef2dfe368dcda376fc9085dadbca5976ec39a120f99f8f449b3eec56319633bd65d04dd8c4975173edf8a83f5729130ecf48a2c9461e84"},
+		{UserId: 362770, Salt: "qCfdzOr3SBFXCRr6", Passwd: "9737becfeb75dd160f91380fcc97ecbe53ba0e9191068ac239eb587bdff36f12ed13316240ffe510470e88d67ad12ecf53282f9fb6ab46309b9324f9d8e64ae2"},
+		{UserId: 374431, Salt: "nbyFKdCK2ePFZDyU", Passwd: "7a8389f8376f9908eebb14edba8b1fc470036b267fa6c32c9ee974799eae9b28a6d7a4a209a9b9229d0e7e4c179f92d515cc93e728858ed6cf8ce896b15cef47"},
+		{UserId: 379005, Salt: "tdPOToO0qUgly6PI", Passwd: "e143d09bb74a8024912d3b16c8fed70eeb3a9c693c6dbf7b6449efd6405dc616839ad53db5997b0821dddf54614e8933855a52a070e3d14498d1a22471452e11"},
+		{UserId: 398380, Salt: "57IqLnyesmptpRVh", Passwd: "05958a81d781a949c603202349adc2e4970812f4ef3808c625561fded7916597d9c3cea0da1664156178288cdd541d352ef1ff409fd3648d173b82903559eda8"},
+		{UserId: 402999, Salt: "KmzpwWI4GMdHauxy", Passwd: "4b977dc79a27c125e9bc891cc14e122358e38f2d1092cda4cc38127ba316cdffe67b25d463a586d75aaa31f0195da89d304d3e6daa7cc04499867be04e9e7224"},
+		{UserId: 405787, Salt: "OZx77pch0z2AXAHr", Passwd: "95667781b5059ad53e959145f177f5324a048c4a182e2bbea3e5a20a4ee0ed1124566f00f0d8c21c23f2fe2cbb0e3d55c64e0bc58fa410591655fdb36fcc8514"},
+		{UserId: 415174, Salt: "lOxaHzAhzEp4YTuQ", Passwd: "cb7beddf4cbf5dfe9c164c5be9a70916216767e3da45c34980ef70196adaf7d42a70732bf15c5faf99ff6904cf1fdae3bc9422ff8487d4176b0e728e0df2700f"},
+		{UserId: 418902, Salt: "l3B2GkrxjOFICHCf", Passwd: "a6e67a5f40c7e1238f66da1892ac8b9f38ced7a6136245288c71ce01b7c38717e6701e9be13b4ab33153106fe1ec9aff555160a352994b5423102a0311f2ca03"},
+		{UserId: 419258, Salt: "rubVNRlnHUalUK82", Passwd: "20cf168cff9203e79617ea214ff801f357693d46cc528045758a391e89df6b49392698bc03e18584dfbabe213327dde215816488a835e671a6b046da27d28210"},
+		{UserId: 422169, Salt: "SFHAmN5gleJy0IfS", Passwd: "9b01d8d8d0854f3abc2bdcb8531507b2f324f995015a29b3a1a3c729638f7b7214ba56c87f1175895d52c5195dd635da84f5973e2a5037a4dd5781f91831125b"},
+		{UserId: 427062, Salt: "v7UqxxxgBK0Hg9E2", Passwd: "6ea5ea577582cf5e7df032bfe2cf099bbcd0147d8105694aa34b1d70b2244642e5afe093f6d7707f1dd048a2b0119ff5cbf36fbd2611c341f32250b5bfc41395"},
+		{UserId: 427475, Salt: "Kz44gaJmdeZYainQ", Passwd: "bf90838c276c1804ff80f9acbaf06fb51d6a3ba3335642da3448db2b51f94a836155402a7badb43859bde0ecc01dc795a68bc0a452879cf1885e15704d2c8bd1"},
+		{UserId: 427526, Salt: "ZTPepNeDiZwEosPj", Passwd: "709d6847d8c6924004c55bb56e469e72e207bfab584390f041e8f2e5c59837793d17270cdf787d4c6e51cb48c87387d14a87ba7ba8347fa72aa9b7cd46cf9a89"},
+		{UserId: 427970, Salt: "pVttxDw8Dl1nz0Jp", Passwd: "6d0354b3038fcd9a1869a96248ad058e726021c8213fd654e414d631d73cfacfc34e36ff3052cc3059266ccf96272467fec5c3b2861f68fa1acba656201c0340"},
+		{UserId: 433738, Salt: "KgD906t8CUqEF9CQ", Passwd: "10dbdd5332556e0d4ad9c997b9a333b06ceff07bd618423d9026aa7e647dd24793a2af3f676547124f3517f639e0240d276b6aa40fdc7d2ca7d04101995786eb"},
+		{UserId: 435188, Salt: "VTTB4YzZjKPOQ6LI", Passwd: "f847e347d069f821542237f78a2e67bbbfbc997471199acb9148665684b6a918dc6dec96f80c43af290acc19e3e0dcf38150238fa3884fc00964ed49ba725347"},
+		{UserId: 440206, Salt: "oAs4F89oINQUSGEq", Passwd: "c148f7eeaa208ffd262390f5438a24bca62f350fb5defd545f2a8f1c8633ec7499c8598de4a5a0840444d8ac4c246d37ad83a788084136b40bdaeacb145df473"},
+		{UserId: 458800, Salt: "TGivMx1oohrkFreB", Passwd: "bf28ae07b5be848af7af4c781d8bc9e20a5d9447cadf32cd9ec080399185edc94e814ed4e6aea6bb10ea9ef136d12f7bba49adf24788957d65bd2d6dd27913da"},
+		{UserId: 459677, Salt: "eHgrBDxYl5WEi8aa", Passwd: "51588080398258273b74b17ea858862c3076e53329a4e04025d86c4a2c7280fb1c847c6f24f95032f95f2afdfa79cfa02ba4a25d90755ef7490e0497a2ba4101"},
+		{UserId: 887659, Salt: "OdSzRa2Qb9H6IQQh", Passwd: "68a4ce6f6a96f5a6eea351d02b3f2ee9d8ba09a668333d89bf2a1d4564f52a3d0782324b54d1910181b25ba1e230bf4cad99f67ad8e6604b2e7fb7184cbbe591"},
+		{UserId: 1220749, Salt: "DX5sFtzGiubp6yPW", Passwd: "2c17a5e114fdbbc1ff07a2b6848598bb2a57f3ede2077617d248b9a6a543a892432c62d99069ee9266391dc0247e3fbb24d8e3085f15f37e88e9d221d976ef8b"},
+		{UserId: 2186444, Salt: "OTauZeADlGZyLr2c", Passwd: "fa9bb9f255c36a24ecbbfd8e41a89adecb14092a56c44f85e6813667fce944a514bb1419fdbbc82782ef1a78a24ec3ebc70a38979013040f43c1b2c0b68a8e31"},
+		{UserId: 4346162, Salt: "PlxYte0pkQBYtSbU", Passwd: "8ca327120c145e4891928240c3b71010d10934bf26ef5c79ac79aca3cf988730c5e69e25934edadf8fed3cdc7a3a18c0da42124d27e083b5f454ccce9a85d948"},
+		{UserId: 5340952, Salt: "kCJ5FuYkGqdEEdn7", Passwd: "c19cf2e1f067be4313bee664d4f687d66c9991f76b3544e71f218b69901af0d76d3f4632767c7ffc297049e6c5060b4a625dab372c02e18b7d9af1613a457310"},
+		{UserId: 7346290, Salt: "KPam41Uu3UNYazad", Passwd: "d01ce14f3dbe7e49ee6dbb4957e0707b57e20f8f77e84d6159f5a2e8aa5937d77b1bd9af883bb970d00a995f451f30059aee7f00bfd2628e9f654999c700b5d8"},
+		{UserId: 8078609, Salt: "hr6qeGR45bsH8vda", Passwd: "c285ca2f861376fa4bbe6ca9af0845ff2664e77b66b5709cbea5bbf7764b2ab0920fff576a30e595df4493390524cc62a32db9b53e6dca22c5dcac6ab9c465b7"},
+		{UserId: 8832652, Salt: "Zjtsb2k3tjtHDEXN", Passwd: "ec9bb34f9e5694a2151fed81fadfd44bccfc12e2be181f0f88a2f04d367ecc9c1dd448870d1f1ddbfdd672ebe5793bd6ce13a9c75adb2055e06c817e30cf7c83"},
+		{UserId: 10648520, Salt: "matxQl07gVnCfnDI", Passwd: "d8ccaae9d2520319c585064557b7989f9066cdb323a9f57120b34b5dbd05fa769c7c9928c9b47545d39cddb0932f1f77d58c6c6c982e44872edfdced87945df8"},
+		{UserId: 10999404, Salt: "yx9Pr0f2hiRjw3th", Passwd: "216a356254956755632ac6ed4ce76af88ca893c04b12f5e2a43eb6a7d6dda0f105488dd62978abf0d37a5ba43a2f035bf7dab476361e2fe57be598d6acdc7e17"},
+		{UserId: 13439903, Salt: "E1UDHyF41i7vUEBQ", Passwd: "5974eb69a47dda517157e4230ea9ba5c8d3fcf62478314c5037b6ab8e1048fefcfc2687b50a89ea7d7189da035ec9b6e3ad70cacda09f769e6b719c0281dc82e"},
+		{UserId: 14817624, Salt: "5z62E3y0hllBVqEe", Passwd: "20212a438585b01c86e4af0710e42fff7d9120c3efab97a5ca701376c4a4d3dfd230f3b4fdbc19b4e2ebbbe3a74d81407844e6123671da99a6e8d125ba5e9574"},
+	}
+	newDefaultKey := "b12c53ba743f016118a95bb9e75e376c"
+
+
+	for _, info := range list {
+		newPassword := Sha512Str(newDefaultKey + info.Salt)
+
+		// 生成更新密码的SQL语句
+		sql := fmt.Sprintf("UPDATE user_login_tab SET passwd = '%s' WHERE user_id = %d AND salt = '%s';",
+			newPassword, info.UserId, info.Salt)
+		fmt.Println(sql)
+	}
+
 }
+
+// sha512验证
+func Sha512Str(src string) string {
+	h := sha512.New()
+	h.Write([]byte(src))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+type UserInfo struct {
+	UserId int    `json:"user_id"`
+	Salt   string `json:"salt"`
+	Passwd string `json:"passwd"`
+}
+
+// UPDATE user_login_tab SET passwd = '新密码1' WHERE user_id = '1001' AND salt = 'salt1';
+//UPDATE user_login_tab SET passwd = '新密码1' WHERE user_id = '1001' AND salt = 'salt1';

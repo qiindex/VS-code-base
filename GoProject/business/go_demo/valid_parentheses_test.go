@@ -1,6 +1,9 @@
 package go_demo
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestIsValidParentheses(t *testing.T) {
 	tests := []struct {
@@ -58,14 +61,14 @@ func TestIsValidParenthesesOptimized(t *testing.T) {
 
 // 基准测试
 func BenchmarkIsValidParentheses(b *testing.B) {
-	s := "({[()]})" * 1000 // 创建一个长字符串
+	s := strings.Repeat("({[()]})", 1000) // 创建一个长字符串
 	for i := 0; i < b.N; i++ {
 		IsValidParentheses(s)
 	}
 }
 
 func BenchmarkIsValidParenthesesOptimized(b *testing.B) {
-	s := "({[()]})" * 1000 // 创建一个长字符串
+	s := strings.Repeat("({[()]})", 1000) // 创建一个长字符串
 	for i := 0; i < b.N; i++ {
 		IsValidParenthesesOptimized(s)
 	}
